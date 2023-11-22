@@ -429,8 +429,7 @@ var CommonClient = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
           // general JSON RPC 2.0 events
           // run as microtask so that pending queue messages are resolved first
           return Promise.resolve().then(function () {
-            var _a;
-            _this4.emit(message.method, (_a = message.params) !== null && _a !== void 0 ? _a : {});
+            _this4.emit(message.method, message.result);
           });
         }
         // reject early since server's response is invalid
