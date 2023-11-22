@@ -117,6 +117,11 @@ export default class CommonClient extends EventEmitter
 
     private getQueueId({ id, method }: { id: number, method: string }): string | number
     {
+        if (method === "rpc.on" || method === "rpc.off" || method === "rpc.login")
+        {
+            return id
+        }
+
         if (this.useMethodAsQueueId)
         {
             return method
