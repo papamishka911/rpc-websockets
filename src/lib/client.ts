@@ -27,7 +27,7 @@ interface IQueueElement {
 }
 
 export interface IQueue {
-    [x: number]: IQueueElement;
+    [x: string]: IQueueElement;
 }
 
 export interface IWSRequestParams {
@@ -47,6 +47,7 @@ export default class CommonClient extends EventEmitter
     private reconnect_timer_id: NodeJS.Timeout
     private reconnect_interval: number
     private max_reconnects: number
+    private useMethodAsQueueId: boolean
     private rest_options: IWSClientAdditionalOptions & NodeWebSocket.ClientOptions
     private current_reconnects: number
     private generate_request_id: (method: string, params: object | Array<any>) => number
@@ -72,8 +73,10 @@ export default class CommonClient extends EventEmitter
             reconnect = true,
             reconnect_interval = 1000,
             max_reconnects = 5,
+            useMethodAsQueueId = true,
             ...rest_options
-        } = {},
+        } = {
+        },
         generate_request_id?: (method: string, params: object | Array<any>) => number,
         dataPack?: DataPack<object, string>
     )
@@ -92,6 +95,7 @@ export default class CommonClient extends EventEmitter
         this.reconnect_timer_id = undefined
         this.reconnect_interval = reconnect_interval
         this.max_reconnects = max_reconnects
+        this.useMethodAsQueueId = useMethodAsQueueId
         this.rest_options = rest_options
         this.current_reconnects = 0
         this.generate_request_id = generate_request_id || (() => ++this.rpc_id)
@@ -109,6 +113,14 @@ export default class CommonClient extends EventEmitter
                 max_reconnects: this.max_reconnects,
                 ...this.rest_options
             })
+    }
+
+    private getQueueId({ id, method }: { id: number, method: string }): string | number {
+        if (this.useMethodAsQueueId) {
+            return method;
+        }
+
+        return id;
     }
 
     /**
@@ -160,8 +172,8 @@ export default class CommonClient extends EventEmitter
             const rpc_id = this.generate_request_id(method, params)
 
             const message = {
+                method,
                 jsonrpc: "2.0",
-                method: method,
                 params: params || null,
                 id: rpc_id
             }
@@ -171,13 +183,15 @@ export default class CommonClient extends EventEmitter
                 if (error)
                     return reject(error)
 
-                this.queue[rpc_id] = { promise: [resolve, reject] }
+                const queueId = this.getQueueId({ method, id: rpc_id });
+
+                this.queue[queueId] = { promise: [resolve, reject] }
 
                 if (timeout)
                 {
-                    this.queue[rpc_id].timeout = setTimeout(() =>
+                    this.queue[queueId].timeout = setTimeout(() =>
                     {
-                        delete this.queue[rpc_id]
+                        delete this.queue[queueId]
                         reject(new Error("reply timeout"))
                     }, timeout)
                 }
@@ -345,37 +359,33 @@ export default class CommonClient extends EventEmitter
                 return Promise.resolve().then(() => { this.emit.apply(this, args) })
             }
 
-            if (!this.queue[message.id])
+            const queueId = this.getQueueId(message);
+
+            if (!this.queue[queueId])
             {
                 // general JSON RPC 2.0 events
-                if (message.method && message.params)
-                {
                     // run as microtask so that pending queue messages are resolved first
-                    return Promise.resolve().then(() =>
-                    {
-                        this.emit(message.method, message.params)
+                    return Promise.resolve().then(() => {
+                        this.emit(message.method, message.params ?? {})
                     })
-                }
-
-                return
             }
 
             // reject early since server's response is invalid
             if ("error" in message === "result" in message)
-                this.queue[message.id].promise[1](new Error(
+                this.queue[queueId].promise[1](new Error(
                     "Server response malformed. Response must include either \"result\"" +
                     " or \"error\", but not both."
                 ))
 
-            if (this.queue[message.id].timeout)
-                clearTimeout(this.queue[message.id].timeout)
+            if (this.queue[queueId].timeout)
+                clearTimeout(this.queue[queueId].timeout)
 
             if (message.error)
-                this.queue[message.id].promise[1](message.error)
+                this.queue[queueId].promise[1](message.error)
             else
-                this.queue[message.id].promise[0](message.result)
+                this.queue[queueId].promise[0](message.result)
 
-            delete this.queue[message.id]
+            delete this.queue[queueId]
         })
 
         this.socket.addEventListener("error", (error) => this.emit("error", error))
