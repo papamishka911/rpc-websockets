@@ -7,6 +7,7 @@ export interface IWSClientAdditionalOptions {
     reconnect?: boolean;
     reconnect_interval?: number;
     max_reconnects?: number;
+    useMethodAsQueueId?: boolean;
 }
 export interface ICommonWebSocketFactory {
     (address: string, options: IWSClientAdditionalOptions): ICommonWebSocket;

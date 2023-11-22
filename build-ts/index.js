@@ -14,13 +14,14 @@ import WebSocket from "./lib/client/websocket";
 import CommonClient from "./lib/client";
 export class Client extends CommonClient {
     constructor(address = "ws://localhost:8080", _a = {}, generate_request_id) {
-        var { autoconnect = true, reconnect = true, reconnect_interval = 1000, max_reconnects = 5 } = _a, rest_options = __rest(_a, ["autoconnect", "reconnect", "reconnect_interval", "max_reconnects"]);
+        var { autoconnect = true, reconnect = true, reconnect_interval = 1000, max_reconnects = 5, useMethodAsQueueId = true } = _a, rest_options = __rest(_a, ["autoconnect", "reconnect", "reconnect_interval", "max_reconnects", "useMethodAsQueueId"]);
         super(
         // @ts-ignore
         WebSocket, address, Object.assign({ autoconnect,
             reconnect,
             reconnect_interval,
-            max_reconnects }, rest_options), generate_request_id);
+            max_reconnects,
+            useMethodAsQueueId }, rest_options), generate_request_id);
     }
 }
 export { default as Server } from "./lib/server";

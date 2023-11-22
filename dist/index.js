@@ -45,14 +45,17 @@ var Client = exports.Client = /*#__PURE__*/function (_CommonClient) {
       reconnect_interval = _a$reconnect_interval === void 0 ? 1000 : _a$reconnect_interval,
       _a$max_reconnects = _a.max_reconnects,
       max_reconnects = _a$max_reconnects === void 0 ? 5 : _a$max_reconnects,
-      rest_options = __rest(_a, ["autoconnect", "reconnect", "reconnect_interval", "max_reconnects"]);
+      _a$useMethodAsQueueId = _a.useMethodAsQueueId,
+      useMethodAsQueueId = _a$useMethodAsQueueId === void 0 ? true : _a$useMethodAsQueueId,
+      rest_options = __rest(_a, ["autoconnect", "reconnect", "reconnect_interval", "max_reconnects", "useMethodAsQueueId"]);
     return _super.call(this,
     // @ts-ignore
     _websocket["default"], address, Object.assign({
       autoconnect: autoconnect,
       reconnect: reconnect,
       reconnect_interval: reconnect_interval,
-      max_reconnects: max_reconnects
+      max_reconnects: max_reconnects,
+      useMethodAsQueueId: useMethodAsQueueId
     }, rest_options), generate_request_id);
   }
   return (0, _createClass2["default"])(Client);
