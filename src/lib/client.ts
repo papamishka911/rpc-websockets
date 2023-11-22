@@ -374,7 +374,7 @@ export default class CommonClient extends EventEmitter
                 // run as microtask so that pending queue messages are resolved first
                 return Promise.resolve().then(() =>
                 {
-                    this.emit(message.method, message.result ?? {})
+                    this.emit(message.method, message.result)
                 })
             }
 
