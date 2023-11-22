@@ -54,6 +54,9 @@ export default class CommonClient extends EventEmitter {
             this._connect(this.address, Object.assign({ autoconnect: this.autoconnect, reconnect: this.reconnect, reconnect_interval: this.reconnect_interval, max_reconnects: this.max_reconnects }, this.rest_options));
     }
     getQueueId({ id, method }) {
+        if (method === "rpc.on" || method === "rpc.off" || method === "rpc.login") {
+            return id;
+        }
         if (this.useMethodAsQueueId) {
             return method;
         }

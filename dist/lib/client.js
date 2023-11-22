@@ -93,6 +93,9 @@ var CommonClient = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
     value: function getQueueId(_ref) {
       var id = _ref.id,
         method = _ref.method;
+      if (method === "rpc.on" || method === "rpc.off" || method === "rpc.login") {
+        return id;
+      }
       if (this.useMethodAsQueueId) {
         return method;
       }
