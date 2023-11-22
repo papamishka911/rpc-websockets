@@ -547,6 +547,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 error: utils.createError(-32600),
+                method: null,
                 id: null
             }
 
@@ -554,6 +555,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 error: utils.createError(-32600, "Invalid JSON RPC version"),
+                method: message.method ?? null,
                 id: message.id || null
             }
 
@@ -561,6 +563,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 error: utils.createError(-32602, "Method not specified"),
+                method: message.method ?? null,
                 id: message.id || null
             }
 
@@ -568,6 +571,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 error: utils.createError(-32600, "Invalid method name"),
+                method: message.method ?? null,
                 id: message.id || null
             }
 
@@ -575,6 +579,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 error: utils.createError(-32600),
+                method: message.method ?? null,
                 id: message.id || null
             }
 
@@ -584,6 +589,7 @@ export default class Server extends EventEmitter
                 return {
                     jsonrpc: "2.0",
                     error: utils.createError(-32000),
+                    method: message.method ?? null,
                     id: message.id || null
                 }
 
@@ -609,6 +615,7 @@ export default class Server extends EventEmitter
                     return {
                         jsonrpc: "2.0",
                         error: utils.createError(-32606),
+                        method: message.method ?? null,
                         id: message.id || null
                     }
                 }
@@ -627,6 +634,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 result: results,
+                method: message.method ?? null,
                 id: message.id || null
             }
         }
@@ -636,6 +644,7 @@ export default class Server extends EventEmitter
                 return {
                     jsonrpc: "2.0",
                     error: utils.createError(-32000),
+                    method: message.method ?? null,
                     id: message.id || null
                 }
 
@@ -664,6 +673,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 result: results,
+                method: message.method ?? null,
                 id: message.id || null
             }
         }
@@ -673,6 +683,7 @@ export default class Server extends EventEmitter
                 return {
                     jsonrpc: "2.0",
                     error: utils.createError(-32604),
+                    method: message.method ?? null,
                     id: message.id || null
                 }
         }
@@ -682,6 +693,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 error: utils.createError(-32601),
+                method: message.method ?? null,
                 id: message.id || null
             }
         }
@@ -695,6 +707,7 @@ export default class Server extends EventEmitter
             return {
                 jsonrpc: "2.0",
                 error: utils.createError(-32605),
+                method: message.method ?? null,
                 id: message.id || null
             }
         }
@@ -718,11 +731,13 @@ export default class Server extends EventEmitter
                         message: error.name,
                         data: error.message
                     },
+                    method: message.method ?? null,
                     id: message.id
                 }
 
             return {
                 jsonrpc: "2.0",
+                method: message.method ?? null,
                 error: error,
                 id: message.id
             }
@@ -742,6 +757,7 @@ export default class Server extends EventEmitter
 
         return {
             jsonrpc: "2.0",
+            method: message.method ?? null,
             result: response,
             id: message.id
         }

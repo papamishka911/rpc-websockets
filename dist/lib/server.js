@@ -28,7 +28,7 @@ var _url = _interopRequireDefault(require("url"));
 var utils = _interopRequireWildcard(require("./utils"));
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof3(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2["default"])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2["default"])(this, result); }; }
@@ -541,6 +541,21 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
     value: (function () {
       var _runMethod2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(message, socket_id) {
         var ns,
+          _a,
+          _b,
+          _c,
+          _d,
+          _e,
+          _f,
+          _g,
+          _h,
+          _j,
+          _k,
+          _l,
+          _m,
+          _o,
+          _p,
+          _q,
           results,
           event_names,
           _iterator4,
@@ -568,6 +583,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32600),
+                method: null,
                 id: null
               });
             case 3:
@@ -578,6 +594,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32600, "Invalid JSON RPC version"),
+                method: (_a = message.method) !== null && _a !== void 0 ? _a : null,
                 id: message.id || null
               });
             case 5:
@@ -588,6 +605,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32602, "Method not specified"),
+                method: (_b = message.method) !== null && _b !== void 0 ? _b : null,
                 id: message.id || null
               });
             case 7:
@@ -598,6 +616,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32600, "Invalid method name"),
+                method: (_c = message.method) !== null && _c !== void 0 ? _c : null,
                 id: message.id || null
               });
             case 9:
@@ -608,6 +627,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32600),
+                method: (_d = message.method) !== null && _d !== void 0 ? _d : null,
                 id: message.id || null
               });
             case 11:
@@ -622,6 +642,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32000),
+                method: (_e = message.method) !== null && _e !== void 0 ? _e : null,
                 id: message.id || null
               });
             case 14:
@@ -652,6 +673,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32606),
+                method: (_f = message.method) !== null && _f !== void 0 ? _f : null,
                 id: message.id || null
               });
             case 28:
@@ -683,6 +705,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 result: results,
+                method: (_g = message.method) !== null && _g !== void 0 ? _g : null,
                 id: message.id || null
               });
             case 47:
@@ -697,6 +720,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32000),
+                method: (_h = message.method) !== null && _h !== void 0 ? _h : null,
                 id: message.id || null
               });
             case 50:
@@ -745,6 +769,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 result: _results,
+                method: (_j = message.method) !== null && _j !== void 0 ? _j : null,
                 id: message.id || null
               });
             case 78:
@@ -759,6 +784,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32604),
+                method: (_k = message.method) !== null && _k !== void 0 ? _k : null,
                 id: message.id || null
               });
             case 81:
@@ -769,6 +795,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32601),
+                method: (_l = message.method) !== null && _l !== void 0 ? _l : null,
                 id: message.id || null
               });
             case 83:
@@ -780,6 +807,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
                 error: utils.createError(-32605),
+                method: (_m = message.method) !== null && _m !== void 0 ? _m : null,
                 id: message.id || null
               });
             case 86:
@@ -810,11 +838,13 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
                   message: _context2.t2.name,
                   data: _context2.t2.message
                 },
+                method: (_o = message.method) !== null && _o !== void 0 ? _o : null,
                 id: message.id
               });
             case 98:
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
+                method: (_p = message.method) !== null && _p !== void 0 ? _p : null,
                 error: _context2.t2,
                 id: message.id
               });
@@ -833,6 +863,7 @@ var Server = exports["default"] = /*#__PURE__*/function (_EventEmitter) {
               }
               return _context2.abrupt("return", {
                 jsonrpc: "2.0",
+                method: (_q = message.method) !== null && _q !== void 0 ? _q : null,
                 result: response,
                 id: message.id
               });
