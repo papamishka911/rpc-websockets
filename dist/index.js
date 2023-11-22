@@ -23,15 +23,13 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 var __rest = void 0 && (void 0).__rest || function (s, e) {
   var t = {};
-  for (var p in s) {
-    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-  }
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
   if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
     if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
   }
   return t;
 };
-var Client = /*#__PURE__*/function (_CommonClient) {
+var Client = exports.Client = /*#__PURE__*/function (_CommonClient) {
   (0, _inherits2["default"])(Client, _CommonClient);
   var _super = _createSuper(Client);
   function Client() {
@@ -48,7 +46,9 @@ var Client = /*#__PURE__*/function (_CommonClient) {
       _a$max_reconnects = _a.max_reconnects,
       max_reconnects = _a$max_reconnects === void 0 ? 5 : _a$max_reconnects,
       rest_options = __rest(_a, ["autoconnect", "reconnect", "reconnect_interval", "max_reconnects"]);
-    return _super.call(this, _websocket["default"], address, Object.assign({
+    return _super.call(this,
+    // @ts-ignore
+    _websocket["default"], address, Object.assign({
       autoconnect: autoconnect,
       reconnect: reconnect,
       reconnect_interval: reconnect_interval,
@@ -57,4 +57,3 @@ var Client = /*#__PURE__*/function (_CommonClient) {
   }
   return (0, _createClass2["default"])(Client);
 }(_client["default"]);
-exports.Client = Client;

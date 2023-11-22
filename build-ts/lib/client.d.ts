@@ -14,7 +14,7 @@ interface IQueueElement {
     timeout?: ReturnType<typeof setTimeout>;
 }
 export interface IQueue {
-    [x: number]: IQueueElement;
+    [x: string]: IQueueElement;
 }
 export interface IWSRequestParams {
     [x: string]: any;
@@ -31,6 +31,7 @@ export default class CommonClient extends EventEmitter {
     private reconnect_timer_id;
     private reconnect_interval;
     private max_reconnects;
+    private useMethodAsQueueId;
     private rest_options;
     private current_reconnects;
     private generate_request_id;
@@ -47,12 +48,14 @@ export default class CommonClient extends EventEmitter {
      * @param {DataPack} dataPack - data pack contains encoder and decoder
      * @return {CommonClient}
      */
-    constructor(webSocketFactory: ICommonWebSocketFactory, address?: string, { autoconnect, reconnect, reconnect_interval, max_reconnects, ...rest_options }?: {
+    constructor(webSocketFactory: ICommonWebSocketFactory, address?: string, { autoconnect, reconnect, reconnect_interval, max_reconnects, useMethodAsQueueId, ...rest_options }?: {
         autoconnect?: boolean;
         reconnect?: boolean;
         reconnect_interval?: number;
         max_reconnects?: number;
+        useMethodAsQueueId?: boolean;
     }, generate_request_id?: (method: string, params: object | Array<any>) => number, dataPack?: DataPack<object, string>);
+    private getQueueId;
     /**
      * Connects to a defined server if not connected already.
      * @method

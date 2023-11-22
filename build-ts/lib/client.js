@@ -30,7 +30,7 @@ export default class CommonClient extends EventEmitter {
      * @return {CommonClient}
      */
     constructor(webSocketFactory, address = "ws://localhost:8080", _a = {}, generate_request_id, dataPack) {
-        var { autoconnect = true, reconnect = true, reconnect_interval = 1000, max_reconnects = 5 } = _a, rest_options = __rest(_a, ["autoconnect", "reconnect", "reconnect_interval", "max_reconnects"]);
+        var { autoconnect = true, reconnect = true, reconnect_interval = 1000, max_reconnects = 5, useMethodAsQueueId = true } = _a, rest_options = __rest(_a, ["autoconnect", "reconnect", "reconnect_interval", "max_reconnects", "useMethodAsQueueId"]);
         super();
         this.webSocketFactory = webSocketFactory;
         this.queue = {};
@@ -42,6 +42,7 @@ export default class CommonClient extends EventEmitter {
         this.reconnect_timer_id = undefined;
         this.reconnect_interval = reconnect_interval;
         this.max_reconnects = max_reconnects;
+        this.useMethodAsQueueId = useMethodAsQueueId;
         this.rest_options = rest_options;
         this.current_reconnects = 0;
         this.generate_request_id = generate_request_id || (() => ++this.rpc_id);
@@ -51,6 +52,12 @@ export default class CommonClient extends EventEmitter {
             this.dataPack = dataPack;
         if (this.autoconnect)
             this._connect(this.address, Object.assign({ autoconnect: this.autoconnect, reconnect: this.reconnect, reconnect_interval: this.reconnect_interval, max_reconnects: this.max_reconnects }, this.rest_options));
+    }
+    getQueueId({ id, method }) {
+        if (this.useMethodAsQueueId) {
+            return method;
+        }
+        return id;
     }
     /**
      * Connects to a defined server if not connected already.
@@ -81,18 +88,19 @@ export default class CommonClient extends EventEmitter {
                 return reject(new Error("socket not ready"));
             const rpc_id = this.generate_request_id(method, params);
             const message = {
+                method,
                 jsonrpc: "2.0",
-                method: method,
                 params: params || null,
                 id: rpc_id
             };
             this.socket.send(this.dataPack.encode(message), ws_opts, (error) => {
                 if (error)
                     return reject(error);
-                this.queue[rpc_id] = { promise: [resolve, reject] };
+                const queueId = this.getQueueId({ method, id: rpc_id });
+                this.queue[queueId] = { promise: [resolve, reject] };
                 if (timeout) {
-                    this.queue[rpc_id].timeout = setTimeout(() => {
-                        delete this.queue[rpc_id];
+                    this.queue[queueId].timeout = setTimeout(() => {
+                        delete this.queue[queueId];
                         reject(new Error("reply timeout"));
                     }, timeout);
                 }
@@ -222,27 +230,26 @@ export default class CommonClient extends EventEmitter {
                 // eslint-disable-next-line prefer-spread
                 return Promise.resolve().then(() => { this.emit.apply(this, args); });
             }
-            if (!this.queue[message.id]) {
+            const queueId = this.getQueueId(message);
+            if (!this.queue[queueId]) {
                 // general JSON RPC 2.0 events
-                if (message.method && message.params) {
-                    // run as microtask so that pending queue messages are resolved first
-                    return Promise.resolve().then(() => {
-                        this.emit(message.method, message.params);
-                    });
-                }
-                return;
+                // run as microtask so that pending queue messages are resolved first
+                return Promise.resolve().then(() => {
+                    var _a;
+                    this.emit(message.method, (_a = message.params) !== null && _a !== void 0 ? _a : {});
+                });
             }
             // reject early since server's response is invalid
             if ("error" in message === "result" in message)
-                this.queue[message.id].promise[1](new Error("Server response malformed. Response must include either \"result\"" +
+                this.queue[queueId].promise[1](new Error("Server response malformed. Response must include either \"result\"" +
                     " or \"error\", but not both."));
-            if (this.queue[message.id].timeout)
-                clearTimeout(this.queue[message.id].timeout);
+            if (this.queue[queueId].timeout)
+                clearTimeout(this.queue[queueId].timeout);
             if (message.error)
-                this.queue[message.id].promise[1](message.error);
+                this.queue[queueId].promise[1](message.error);
             else
-                this.queue[message.id].promise[0](message.result);
-            delete this.queue[message.id];
+                this.queue[queueId].promise[0](message.result);
+            delete this.queue[queueId];
         });
         this.socket.addEventListener("error", (error) => this.emit("error", error));
         this.socket.addEventListener("close", ({ code, reason }) => {

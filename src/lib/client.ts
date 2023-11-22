@@ -115,12 +115,14 @@ export default class CommonClient extends EventEmitter
             })
     }
 
-    private getQueueId({ id, method }: { id: number, method: string }): string | number {
-        if (this.useMethodAsQueueId) {
-            return method;
+    private getQueueId({ id, method }: { id: number, method: string }): string | number
+    {
+        if (this.useMethodAsQueueId)
+        {
+            return method
         }
 
-        return id;
+        return id
     }
 
     /**
@@ -183,7 +185,7 @@ export default class CommonClient extends EventEmitter
                 if (error)
                     return reject(error)
 
-                const queueId = this.getQueueId({ method, id: rpc_id });
+                const queueId = this.getQueueId({ method, id: rpc_id })
 
                 this.queue[queueId] = { promise: [resolve, reject] }
 
@@ -359,15 +361,16 @@ export default class CommonClient extends EventEmitter
                 return Promise.resolve().then(() => { this.emit.apply(this, args) })
             }
 
-            const queueId = this.getQueueId(message);
+            const queueId = this.getQueueId(message)
 
             if (!this.queue[queueId])
             {
                 // general JSON RPC 2.0 events
-                    // run as microtask so that pending queue messages are resolved first
-                    return Promise.resolve().then(() => {
-                        this.emit(message.method, message.params ?? {})
-                    })
+                // run as microtask so that pending queue messages are resolved first
+                return Promise.resolve().then(() =>
+                {
+                    this.emit(message.method, message.params ?? {})
+                })
             }
 
             // reject early since server's response is invalid

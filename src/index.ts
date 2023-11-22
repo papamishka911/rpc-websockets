@@ -19,6 +19,7 @@ export class Client extends CommonClient
     )
     {
         super(
+            // @ts-ignore
             WebSocket,
             address,
             {
